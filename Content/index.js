@@ -13,11 +13,6 @@ class Svg {
         this.shapeElement = ''
     }
 
-    render() {
-
-        return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="300" height="200">${this.shapeElement}${this.textElement}</svg>`
-    }
-
     setTextElement(text,color) {
         this.textElement = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`
     }
@@ -26,7 +21,10 @@ class Svg {
         this.shapeElement = shape.render();
 
     }
-    
+     render() {
+
+        return `<svg version="1.1" xmlns='http://www.w3.org/2000/svg' width="300" height="200">${this.shapeElement}${this.textElement}</svg>`
+    }
 }
 
 // inquirer
@@ -75,7 +73,7 @@ async function start() {
     var SVGfile = 'logo.svg';
     const answers = await inquirer.prompt(questions);
 
-    // letters must be between 1 and 3 characterse
+    // letters must be between 1 and 3 characters dk why no work
     // var textChoice = '';
     // if (answers.text.length > 0 && answers.text.length < 4) {
     //     textChoice = answers.text;
