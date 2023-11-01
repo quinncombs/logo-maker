@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const fs = require('fs')
 const { Circle, Square, Triangle } = require('./lib/shapes');
 
 // this should pass:
@@ -6,8 +7,31 @@ const { Circle, Square, Triangle } = require('./lib/shapes');
 // shape.setColor("blue");
 // expect(shape.render()).toEqual('<polygon points="150, 18 244, 182 56, 182" fill="blue" />');
 
-inquirer
-    .prompt([
+class Svg {
+    constructor() {
+        this.textElement = ''
+        this.shapeElement = ''
+    }
+
+    render() {
+
+        return `<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="300" height="200">${this.shapeElement}${this.textElement}</svg>`
+    }
+
+    setTextElement(text,color) {
+        this.textElement = `<text x="150" y="125" font-size="60" text-anchor="middle" fill="${color}">${text}</text>`
+    }
+
+    setShapeElement(shape) {
+        this.shapeElement = shape.render();
+
+    }
+    
+}
+
+// inquirer
+//     .prompt(
+        const questions = [
 
         {
             type: 'input',
@@ -30,69 +54,72 @@ inquirer
         {
             type: 'list',
             name: 'shape',
-            message: 'Which shape would you like? (please capitalize the first letter!:)',
+            message: 'Which shape would you like?',
             choices: [ 'Circle', 'Square', 'Triangle'],
         }
 
-    ])
+    ]
 
     // function to write shape file
 // .then((answers) => {
-//     const SVGfile = generateMarkdown(answers);
+//     const SVGfile =
   
-fs.writeToFile('./examples', SVGfile, (err) =>
+function writeToFile(fileName, data) {
+    fs.writeFile(fileName, data, function (err) {
 err ? console.log(err) : console.log('Generated logo.svg.')
-)
+})
+}
 
 async function start() {
     var svgCreate = '';
     var SVGfile = 'logo.svg';
+    const answers = await inquirer.prompt(questions);
 
+    // letters must be between 1 and 3 characterse
+    // var textChoice = '';
+    // if (answers.text.length > 0 && answers.text.length < 4) {
+    //     textChoice = answers.text;
+    // } else {
+    //     console.log("Must be only between 1 and 3 characters!");
+    //     return;
+    // }
 
-// letters must be between 1 and 3 characterse
-var textChoice = '';
-if (answers.text.length > 0 && answers.text.length < 4) {
-      textChoice = answers.text;
-  } else {
-      console.log("Must be only between 1 and 3 characters!");
-      return;
-  }
+    // console log answers and set
+    letters = answers['characters'];
+        console.log(letters);
+    fontColor = answers['textColor'];
+        console.log(fontColor);
+    imageColor = answers['shapeColor'];
+        console.log(imageColor);
+    image = answers['shape'];
+        console.log(image);
 
-// console log answers and set
-letters = answers['characters'];
-    console.log(letters);
-fontColor = answers['textColor'];
-    console.log(textColor);
-imageColor = answers['shapeColor'];
-    console.log(shapeColor);
-image = answers['shape'];
-    console.log(shape);
+    // shape
+    let shapeChoice;
+    if (image === 'Circle') {
+        shapeChoice = new Circle()
+    }
+    else if (image === 'Square') {
+        shapeChoice = new Square()
+    }
+    else if (image === 'Triangle') {
+        shapeChoice = new Triangle()
+    }
+    else {
+        console.log('Please choose between Circle, Square, or Triangle')
+    }
 
-// shape
-let shapeChoice;
-if (image === 'Circle') {
-    shapeChoice = new Circle()
-}
-else if (image === 'Square') {
-    shapeChoice = new Square()
-}
-else if (image === 'Triangle') {
-    shapeChoice = new Triangle()
-}
-else {
-    console.log('Please choose between Circle, Square, or Triangle')
-}
+    //puts shape and color together
+    shapeChoice.setColor(imageColor);
 
-  //puts shape and color together
-shapeChoice.setColor(imageColor);
+    //put choices together to crate svg
+    var svg = new Svg();
+    svg.setTextElement(letters, fontColor)
+    svg.setShapeElement(shapeChoice)
+    svgCreate = svg.render()
 
-  //put choices together to crate svg
-var svg = new Svg();
-svg.setTextElement(textChoice, fontColor)
-svg.setShapeElement(shapeChoice)
-svgCreate = svg.render()
+writeToFile(SVGfile, svgCreate)
 
-writetoFile(SVGfile, svgCreate)
 }
 
 start()
